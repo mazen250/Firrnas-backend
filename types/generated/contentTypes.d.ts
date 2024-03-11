@@ -392,6 +392,93 @@ export interface ApiBlogBlog extends Schema.CollectionType {
   };
 }
 
+export interface ApiCollectionCollection extends Schema.CollectionType {
+  collectionName: 'collections';
+  info: {
+    singularName: 'collection';
+    pluralName: 'collections';
+    displayName: 'collection';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Name: Attribute.String &
+      Attribute.Required &
+      Attribute.DefaultTo<'collectionName'>;
+    collectionImage: Attribute.Media;
+    products: Attribute.Relation<
+      'api::collection.collection',
+      'manyToMany',
+      'api::product.product'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::collection.collection',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::collection.collection',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiProductProduct extends Schema.CollectionType {
+  collectionName: 'products';
+  info: {
+    singularName: 'product';
+    pluralName: 'products';
+    displayName: 'product';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        minLength: 5;
+      }> &
+      Attribute.DefaultTo<'Product title'>;
+    description: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        minLength: 5;
+      }> &
+      Attribute.DefaultTo<'product desc'>;
+    ModelLink: Attribute.String & Attribute.DefaultTo<'NAN'>;
+    ModelImage: Attribute.Media;
+    addedDate: Attribute.Date;
+    collections: Attribute.Relation<
+      'api::product.product',
+      'manyToMany',
+      'api::collection.collection'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface PluginUploadFile extends Schema.CollectionType {
   collectionName: 'files';
   info: {
@@ -725,7 +812,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     username: Attribute.String &
@@ -754,6 +840,13 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    Firstname: Attribute.String &
+      Attribute.Required &
+      Attribute.DefaultTo<'firstname'>;
+    lastname: Attribute.String &
+      Attribute.Required &
+      Attribute.DefaultTo<'lastname'>;
+    points: Attribute.Decimal & Attribute.DefaultTo<0>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -829,6 +922,8 @@ declare module '@strapi/types' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'api::blog.blog': ApiBlogBlog;
+      'api::collection.collection': ApiCollectionCollection;
+      'api::product.product': ApiProductProduct;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;
